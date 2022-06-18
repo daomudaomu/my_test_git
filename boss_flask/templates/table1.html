@@ -1,0 +1,390 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+      <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>岗位信息表</title>
+	<!-- Bootstrap Styles-->
+    <link href="static/assets/css/bootstrap.css" rel="stylesheet" />
+     <!-- FontAwesome Styles-->
+    <link href="static/assets/css/font-awesome.css" rel="stylesheet" />
+     <!-- Morris Chart Styles-->
+   
+        <!-- Custom Styles-->
+    <link href="static/assets/css/custom-styles.css" rel="stylesheet" />
+     <!-- Google Fonts-->
+   <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css' />
+     <!-- TABLE STYLES-->
+    <link href="static/assets/js/dataTables/dataTables.bootstrap.css" rel="stylesheet" />
+    <script src="static/assets/js/echarts.min.js"></script>
+</head>
+<body>
+    <form action="/table" method="post">
+    <div id="wrapper">
+        <nav class="navbar navbar-default top-navbar" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/index">BOSS直聘</a>
+            </div>
+
+        </nav>
+        <!--/. NAV TOP  -->
+        <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+
+                    <li>
+                        <a href="/index"><i class="fa fa-dashboard"></i> 首页</a>
+                    </li>
+                    <li>
+                        <a href="/table1" class="active-menu"><i class="fa fa-table"></i> 岗位信息表</a>
+                    </li>
+                </ul>
+
+            </div>
+
+        </nav>
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper" >
+            <div id="page-inner">
+			 <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="page-header">
+                            {{kw}} <small>岗位信息表</small>
+                        </h1>
+                        <div style="float:right;ma">
+                        <input type="text" name="question" placeholder="输入想查看的岗位名称" style="height: 36px;width: 30px,;width: 208px;margin-bottom: 5%">
+                        <input type="submit" value="搜索" name="question" style="height: 36px;width: 56px;">
+                        </div>
+                    </div>
+                </div> 
+                 <!-- /. ROW  -->
+               
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- Advanced Tables -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <p style="font-size:20px">{{kw}}</p>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <thead>
+                                        <tr>
+                                            <th>排序</th>
+                                            <th>工作名称</th>
+                                            <th>工作地点</th>
+                                            <th>公司名称</th>
+                                            <th>公司类型</th>
+                                            <th>薪资</th>
+                                            <th>经验学历</th>
+                                            <th>标签</th>
+                                            <th>福利待遇</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in items %}
+                                    <tr>
+                                        <td>{{item[0]}}</td>
+                                        <td>{{item[1]}}</td>
+                                        <td>{{item[2]}}</td>
+                                        <td>{{item[3]}}</td>
+                                        <td>{{item[4]}}</td>
+                                        <td>{{item[5]}}</td>
+                                        <td>{{item[6]}}</td>
+                                        <td>{{item[7]}}</td>
+                                        <td>{{item[8]}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!--End Advanced Tables -->
+                </div>
+            </div>
+                <!-- /. ROW  -->
+            <div class="row">
+                <div class="col-md-6">
+                  <!--   Kitchen Sink -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            薪资
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <div id="main" style="height: 300%"></div>
+                                     <script type="text/javascript">
+                                        var dom = document.getElementById("main");
+                                        var myChart = echarts.init(dom);
+                                        var app = {};
+                                        var option;
+                                        option = {
+                                        title: {
+                                            text: '{{kw}}薪资表'
+                                          },
+                                          tooltip: {
+                                                trigger: 'axis',
+                                                axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                                                    type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                                                }
+                                            },
+                                            grid: {
+                                                left: '5%',
+                                                right: '4%',
+                                                bottom: '3%',
+                                                containLabel: true
+                                              },
+                                          yAxis: {
+                                            type: 'category',
+                                            data: ['平均最搞工资','平均工资', '平均最低工资']
+                                          },
+                                          xAxis: {
+                                            type: 'value',
+                                            max:25000,
+                                          },
+                                          label: {
+                                                show: true,
+                                                position: 'insideRight'
+                                            },
+                                          series: [
+                                            {
+                                              data: [{{high[0]}},{{avg}},{{low[0]}}],
+                                              type: 'bar',
+                                              showBackground: true,
+                                              backgroundStyle: {
+                                                color: 'rgba(180, 180, 180, 0.2)'
+                                              }
+                                            }
+                                          ]
+                                        };
+
+                                        if (option && typeof option === 'object') {
+                                            myChart.setOption(option);
+                                        }
+
+                                                </script>
+                            </div>
+                        </div>
+                    </div>
+                     <!-- End  Kitchen Sink -->
+                </div>
+                <div class="col-md-6">
+                     <!--   Basic Table  -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            薪资表
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                            <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>名称</th>
+                                            <th>平均最低工资</th>
+                                            <th>平均工资</th>
+                                            <th>平均最高工资</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <th>{{kw}}</th>
+                                        <th>{{low[0]}}元</th>
+                                        <th>{{avg}}元</th>
+                                        <th>{{high[0]}}元</th>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                      <!-- End  Basic Table  -->
+                </div>
+            </div>
+                <!-- /. ROW  -->
+            <div class="row">
+                <div class="col-md-6">
+                      <!--    Striped Rows Table  -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            学历
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <div id="container" style="height: 500%"></div>
+                                     <script type="text/javascript">
+                                        var dom = document.getElementById("container");
+                                        var myChart = echarts.init(dom);
+                                        var app = {};
+
+                                        var option;
+
+
+
+                                        option = {
+                                        title: {
+                                            text: '{{kw}}学历需求'
+                                          },
+                                          tooltip: {
+                                                trigger: 'axis',
+                                                axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                                                    type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                                                }
+                                            },
+                                          yAxis: {
+                                            type: 'category',
+                                            data: ['高中','大专', '本科', '研究生', '硕士', '博士', '学历不限']
+                                          },
+                                          xAxis: {
+                                            type: 'value',
+                                            max:300,
+                                          },
+                                          label: {
+                                                show: true,
+                                                color: 'rgb(14,21,31)',
+                                                position: 'insideLeft',
+                                                distance: 10
+                                            },
+                                          series: [
+                                            {
+                                              data: [{{gz[0]}},{{dz[0]}},{{bk[0]}},{{yjs[0]}},{{ss[0]}},{{bs[0]}},{{bx[0]}}],
+                                              type: 'bar',
+                                              showBackground: true,
+                                              backgroundStyle: {
+                                                color: 'rgba(180, 180, 180, 0.2)'
+                                              }
+                                            }
+                                          ]
+                                        };
+
+                                        if (option && typeof option === 'object') {
+                                            myChart.setOption(option);
+                                        }
+
+                                                </script>
+                            </div>
+                        </div>
+                    </div>
+                    <!--  End  Striped Rows Table  -->
+                </div>
+                <div class="col-md-6">
+                    <!--    Bordered Table  -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            岗位关键词
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="table-responsive table-bordered">
+                                <table class="table">
+                                    <img src="static/assets/img/{{kw}}.jpg"style="padding-left: 50px;">
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                     <!--  End  Bordered Table  -->
+                </div>
+            </div>
+                <!-- /. ROW  -->
+            <div class="row">
+                <div class="col-md-6">
+                     <!--    Hover Rows  -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            公司排名
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>排名</th>
+                                            <th>公司名称</th>
+                                            <th>公司出现次数</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </thead>
+                                    <tbody>
+                                    {% for company_name in company_names %}
+
+                                        <tr class="success">
+                                            <td>{{company_name[0]}}</td>
+                                            <td>{{company_name[1]}}</td>
+                                            <td>{{company_name[2]}}</td>
+                                        </tr>
+
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End  Hover Rows  -->
+                </div>
+                <div class="col-md-6">
+                     <!--    Context Classes  -->
+                    <div class="panel panel-default">
+                       
+                        <div class="panel-heading">
+                            福利关键词
+                        </div>
+                        
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                 <img src="static/assets/img/{{kw}}福利.jpg"style="padding-left: 50px;">
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!--  end  Context Classes  -->
+                </div>
+            </div>
+                <!-- /. ROW  -->
+                <div class="row">
+                <div class="col-md-9 col-sm-12 col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3>相关岗位</h3>
+                            </div>
+                            <div class="panel-body">
+                                <h4>{{name}}</h4>
+                            </div>
+                        </div>
+                </div>
+
+                </div>
+        </div>
+               <footer><p>All right reserved. Template by: <a href="http://webthemez.com">WebThemez</a></p></footer>
+    </div>
+             <!-- /. PAGE INNER  -->
+            </div>
+         <!-- /. PAGE WRAPPER  -->
+     <!-- /. WRAPPER  -->
+    <!-- JS Scripts-->
+    <!-- jQuery Js -->
+    <script src="static/assets/js/jquery-1.10.2.js"></script>
+      <!-- Bootstrap Js -->
+    <script src="static/assets/js/bootstrap.min.js"></script>
+    <!-- Metis Menu Js -->
+    <script src="static/assets/js/jquery.metisMenu.js"></script>
+     <!-- DATA TABLE SCRIPTS -->
+    <script src="static/assets/js/dataTables/jquery.dataTables.js"></script>
+    <script src="static/assets/js/dataTables/dataTables.bootstrap.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#dataTables-example').dataTable();
+            });
+    </script>
+         <!-- Custom Js -->
+    <script src="static/assets/js/custom-scripts.js"></script>
+    </form>
+</body>
+</html>
